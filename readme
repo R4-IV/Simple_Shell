@@ -1,0 +1,74 @@
+Basic Unix shell implemented with C++, Featuring internal commands and an environment, the shell features access to external Linux commands as well as background execution and i/o redirection. The shell uses a fork exec approach.
+The shell features user command line input as well as bash file input.
+
+Setup:
+
+
+Shell must complied with C++17 in the g++ compiler with the following format:
+g++ -std=c++17 shell.cpp -o myshell [Make file is included that performs this task for the user, type make in the same directory as the shell makefile and source code].
+
+Internal Commands:
+
+
+cd <directory> 
+displays the current directory with no arguments or moves the user to the specified directory <directory> will return errors if the target is a file.
+
+cls<>
+takes no arguments clears the command line console will produce errors if it receives arguments.
+
+dir<directory>
+displays the contents of the current directory can be redirected using > or >> to an external file will fail if the argument is not a directory or if there is more than one argument.
+
+copy<source><destination>
+copies either a file or a directory <target> recursively to the chosen destination <target> can fail if the target is not a directory or if there are more than 2 arguments.
+
+print<comment>
+displays the <comment> to the output stream therefore can also be redirected using > or >> 
+
+md<directory>
+creates a directory at the current working directory or if a full path is provided then will be created at the path. Will fail if there is more than one argument
+
+rd<directory>
+removes an empty directory at the specified path <directory> will fail if the directory is not empty. Will also fail if there is more than one argument
+
+quit<>
+takes no arguments exits the shell environment.
+
+Internal Environ Variable:
+
+
+shell=pathToExe
+on shell startup an environmental variable shell is created it stores the full path to the shell executable file [This implementation only works on linux OP systems]
+
+External Commands:
+
+
+The shell supports external commands such as ls , ps , pwd , env , and top using execvp() all options and redirection is also available for these commands format externalCmd<args>
+
+Background Execution:
+
+
+The shell supports background execution whenever a "&" delimited by a whitespace is present at the end of the command. Background execution output is redirected to dev/null by default hence its not a good idea to background programs that require console interaction.
+Background execution is done by orphaning grandchild process so that it gets adopted by init and becomes separate from shell pid.
+Example: command args &
+
+I/O redirection:
+
+
+Shell supports I/O redirection with the following format: redirectionSymbol<target file>
+if redirection is used with background execution then the dev/null stream is overwritten with the users target stream
+
+...< targetFile -> will overwrite the STDIN stream allowing for input from files please note this is not necessary for taking bash input.
+
+...> targetFile -> will overwrite STDOUT either creating or opening the target stream if it already exists and saving the output to said file , this process will overwrite any contents currently in the file.
+
+...>> target file -> will do same as above but append the output to the previous instead of overwriting.
+
+Bash file Input(shell scripts):
+
+
+The shell supports bash file input in the following format: myshell shell script
+This method of input supports all commands redirection and background execution. The shell will exit once all commands have been executed.
+
+
+	
